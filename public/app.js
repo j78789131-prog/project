@@ -179,7 +179,7 @@ function setWeatherLayer(layer){
   if(layer==='none'){viewer.scene.requestRender();return}
   const provider=new Cesium.UrlTemplateImageryProvider({
     url:'/api/weather/tiles/'+layer+'/{z}/{x}/{y}.png',
-    tilingScheme=new Cesium.WebMercatorTilingScheme(),
+    tilingScheme: new Cesium.WebMercatorTilingScheme(),
     maximumLevel:18,
     credit:'Weather tiles © OpenWeather'
   });
