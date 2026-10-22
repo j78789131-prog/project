@@ -80,7 +80,7 @@ function syncMyModel(){
   if(!viewer||!flight)return;
   const ent=viewer.entities.getById('my-plane');
   const p=Cesium.Cartesian3.fromDegrees(position.lon,position.lat,position.altitude*.3048);
-  if(ent){ent.position=p;ent.orientation=hpr(position,heading,keys.w?-.04:keys.s?.04:0,keys.a?.08:keys.d?-.08:0)}
+  if(ent){ent.position=p;ent.orientation=hpr(position,heading,keys.w ? -0.04 : keys.s ? 0.04 : 0,keys.a ? 0.08 : keys.d ? -0.08 : 0)}
   const camera=$('#camera-mode')?.value||'chase';
   if(camera==='free')return;
   const target=Cesium.Cartesian3.clone(p);
@@ -132,7 +132,7 @@ function connectNetwork(){
   socket.on('connect',()=>{socket.emit('pilot:join',{...position,planeId:selected});safeText($('#voice-status'),'Connected to multiplayer. Enable microphone to talk.')});
   socket.on('connect_error',e=>safeText($('#voice-status'),'Online sign-in failed: '+e.message));
   socket.on('pilots:update',ps=>{ps.forEach(p=>{if(p.id!==socket.id)upsertRemote(p)});updatePilotList(ps)});
-  socket.on('pilot:joined',p=>{upsertRemote(p);if(localStream)initiatePeer(p.id);refreshPilotList()});
+  socket.on('pilot:joined',p=>{upsertRemote(p);if(localStream&&socket.id<p.id)initiatePeer(p.id);refreshPilotList()});
   socket.on('pilot:moved',p=>upsertRemote(p));
   socket.on('pilot:left',id=>{viewer?.entities.removeById('pilot-'+id);remotePilots.delete(id);closePeer(id);refreshPilotList()});
   setupVoiceSignaling();
