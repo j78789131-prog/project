@@ -1,61 +1,63 @@
 # Earthflight Online
 
-A responsive browser-based 3D globe flight-game starter using CesiumJS, Express, Socket.IO and MongoDB.
+A browser-based Earth flight game prototype using CesiumJS, Express, Socket.IO, MongoDB, WebRTC and Groq.
 
-## Current starter features
+## Current implementation
 
-- Registration and login with bcrypt password hashing, JWT sessions and basic rate limiting.
-- Cesium globe, terrain activation when a Cesium ion token is configured, time-of-day slider, place search and coordinate destination input.
-- Ten aircraft selection cards, including the two requested GLB URLs and eight additional aircraft categories.
-- Basic browser flight movement, PC keyboard and mobile touch controls.
-- Socket.IO pilot position broadcasting and a basic WebRTC voice-chat signaling flow.
-- Optional Groq co-pilot endpoint and OpenWeather current-conditions endpoint.
-- Render deployment manifest and responsive interface.
+- Account registration/login with bcrypt password hashing, JWTs and basic rate limiting.
+- Cesium globe with satellite imagery when a Cesium ion token is configured, plus global elevation terrain.
+- Ten aircraft choices; aircraft render as glTF/GLB scene models. The A320 and Darkstar use configured public model URLs, while several other aircraft currently share a generic sample aircraft model until aircraft-specific, licensed models are supplied.
+- Continuous coordinate-based flight movement, heading, throttle, altitude controls, route line, instrument HUD and chase/cockpit/free camera modes.
+- Socket.IO multiplayer positions with server-side JWT authentication, coordinate validation and position update throttling.
+- WebRTC peer-to-peer microphone voice chat with mute control. STUN is configured; some networks require a separately configured TURN relay for reliable connectivity.
+- OpenWeather current conditions and optional temperature/cloud/precipitation/wind/pressure map overlays through a server-side tile proxy.
+- Groq co-pilot with current flight context passed from the browser.
+- Render health endpoint at /api/health.
 
-## Important scope notes
+## Important limitations
 
-This is a playable prototype foundation, not a finished high-fidelity flight simulator. Several catalogue aircraft currently use illustrated cards rather than verified 3D models; only the A320 and Darkstar entries have the supplied GLB URLs. The first version does not yet load aircraft GLBs into the scene or attach a cockpit/chase camera, and the movement physics are simplified. The Cesium terrain layer needs a valid ion token and suitable assets. Production voice chat usually requires a TURN relay, not just STUN. Online pilot state is currently in-memory, not durable. OpenWeather current conditions do not provide colored global satellite/radar tile imagery; that requires a compatible weather-tile provider and its terms/API. "ClaudeFlare" is ambiguous and is not integrated; tell us the exact service/API before enabling generated landscapes.
+This is a more capable playable prototype, not a certified or high-fidelity simulator. Flight dynamics are still simplified and do not yet implement full aerodynamic lift/stall, runway takeoff/landing, collisions, air traffic control, or instrument navigation. The model URLs are external and can change or become unavailable; the generic sample model is not the real aircraft for every selection. Use aircraft-specific GLB assets you have permission to distribute.
 
-## Deploy to Render
+Cesium terrain and high-resolution imagery require a valid Cesium ion token with appropriate asset access. OpenWeather overlays require an API key and an account/plan that supports the requested map tile endpoints. Check the provider's current product terms, rate limits and attribution requirements. Weather tile access is proxied by this app so the key is not sent to the browser.
 
-1. Push this repository to GitHub and open https://dashboard.render.com.
-2. Choose **New + → Blueprint**, select this repository, and let Render read `render.yaml`.
-3. Add the secret environment variables listed below in the Render service's Environment tab. Render generates `JWT_SECRET` from the blueprint; keep it private.
-4. Create a MongoDB Atlas cluster, create a database user, allow network access from Render (for a quick test you may use `0.0.0.0/0`, with a strong DB password), and copy the Atlas connection string. Set the database name to `earthflight` and URL-encode special characters in the password.
-5. For Cesium terrain/imagery, create a Cesium ion access token at https://ion.cesium.com/ and set `CESIUM_ION_TOKEN`.
-6. Save environment variables and deploy. Visit the Render URL and register a test account.
+Voice chat uses peer-to-peer WebRTC. STUN alone is not sufficient for every network; reliable public voice typically needs a TURN provider. The app does not record audio. Multiplayer pilot positions are in memory on the server, not persisted or shared across multiple Render instances.
+
+## Deploy on Render as a Web Service (not Blueprint)
+
+1. Open https://dashboard.render.com and choose New + → Web Service.
+2. Connect this repository and select the feature/real-world-flight branch for this feature preview, or merge the branch into main first and deploy main.
+3. Use Node; build command: npm install; start command: npm start; health check path: /api/health. Leave Root Directory blank.
+4. In the service's Environment tab, set the required variables below. Do not put secret keys in GitHub.
+5. Deploy and open the Render-provided service URL.
 
 ## Environment variables
 
-Required:
-- `MONGODB_URI`: MongoDB Atlas connection URI.
-- `JWT_SECRET`: long random secret used to sign login tokens.
+Required for account registration/login and authenticated multiplayer:
+- MONGODB_URI: MongoDB Atlas connection URI.
+- JWT_SECRET: long random secret used to sign tokens.
 
 Optional:
-- `CESIUM_ION_TOKEN`: Cesium ion token for terrain and hosted assets.
-- `GROQ_API_KEY`: Groq API key for the AI co-pilot.
-- `GROQ_MODEL`: optional model ID, defaults to `llama-3.3-70b-versatile`.
-- `OPENWEATHER_API_KEY`: OpenWeather API key for current local conditions.
-- `CORS_ORIGIN`: optional allowed origin for Socket.IO; keep unset for same-origin Render deployment.
-- `PORT`: provided by Render automatically; do not normally set manually.
+- CESIUM_ION_TOKEN: Cesium ion token for detailed imagery and elevation terrain.
+- GROQ_API_KEY: Groq API key for the AI co-pilot.
+- GROQ_MODEL: optional Groq model ID; defaults to llama-3.3-70b-versatile.
+- OPENWEATHER_API_KEY: OpenWeather current conditions and map overlays (availability depends on your provider plan).
+- CORS_ORIGIN: optional Socket.IO origin policy; keep unset for same-origin deployment.
+- PORT: supplied by Render; do not normally set manually.
 
-Never commit real API keys or `.env` to GitHub. If a secret is accidentally committed, rotate it.
+Never commit real API keys or .env to GitHub. If a secret is accidentally committed, rotate it.
 
 ## Local development
 
-```sh
-npm install
-cp .env.example .env
-npm start
-```
+    npm install
+    cp .env.example .env
+    npm start
 
-Open http://localhost:10000. Set the variables in `.env` first.
+Open http://localhost:10000. Configure environment variables before signing in.
 
-## Suggested next engineering milestones
+## Next milestones
 
-1. Replace placeholder aircraft cards with validated GLB models and load them via Cesium primitives or Three.js/Cesium integration.
-2. Add proper aircraft chase/cockpit camera, physics, collisions, takeoff/landing, route line and flight instruments.
-3. Persist authenticated pilot identity in socket handshakes; validate and rate-limit all socket events.
-4. Use a TURN provider for reliable voice and add consent/mute controls.
-5. Integrate a licensed weather tile service for global overlays and confirm the intended landscape-generation provider.
-6. Add tests, logging, monitoring and security review before public launch.
+1. Replace generic aircraft with verified, licensed, aircraft-specific models and tune their model orientation/scale.
+2. Improve aerodynamic simulation, terrain collision, runway operations and flight instrumentation.
+3. Add a managed TURN service and improve voice reconnect/room controls.
+4. Persist online session state if deploying multiple server instances; use a Socket.IO adapter for horizontal scaling.
+5. Add automated tests, observability, accessibility and security review before public launch.
