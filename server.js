@@ -140,7 +140,7 @@ const WEATHER_LAYERS = new Set(['temp_new', 'clouds_new', 'precipitation_new', '
 app.get('/api/weather/tiles/:layer/:z/:x/:y.png', async (req, res) => {
   if (!process.env.OPENWEATHER_API_KEY) return res.status(503).end('Weather tiles are not configured.');
   const { layer, z, x, y } = req.params;
-  if (!WEATHER_LAYERS.has(layer) || ![z, x, y].every(v => /^\d{1,2}$/.test(v)) || Number(z) > 18) return res.status(400).end();
+  if (!WEATHER_LAYERS.has(layer) || ![z].every(v => /^\d{1,2}$/.test(v)) || ![x, y].every(v => /^\d{1,6}$/.test(v)) || Number(z) > 18) return res.status(400).end();
   try {
     const url = new URL('https://tile.openweathermap.org/map/' + layer + '/' + z + '/' + x + '/' + y + '.png');
     url.searchParams.set('appid', process.env.OPENWEATHER_API_KEY);
