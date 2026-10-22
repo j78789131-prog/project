@@ -133,5 +133,6 @@ io.on('connection', socket => {
   socket.on('voice:ice', ({ to, candidate }) => { if (pilots.has(to)) io.to(to).emit('voice:ice', { from: socket.id, candidate }); });
   socket.on('disconnect', () => { pilots.delete(socket.id); io.emit('pilot:left', socket.id); });
 });
+app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'earthflight-online' }));
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 server.listen(PORT, () => console.log('Earthflight listening on ' + PORT));
