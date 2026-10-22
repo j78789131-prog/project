@@ -205,8 +205,8 @@ $('#logout').onclick=()=>{socket?.disconnect();location.reload()};
 $('#camera-mode').onchange=()=>syncMyModel();
 $('#weather-layer').onchange=e=>setWeatherLayer(e.target.value);
 $('#time-of-day').oninput=e=>{if(viewer){const h=+e.target.value;viewer.clock.currentTime=Cesium.JulianDate.fromDate(new Date(Date.UTC(2025,5,21,Math.floor(h),Math.round((h%1)*60))));viewer.scene.globe.enableLighting=true;viewer.scene.requestRender()}};
-window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;const k=e.key.toLowerCase();if(['w','a','s','d','shift','control',' '].includes(k)){keys[k]=true;if(k===' ')e.preventDefault()}if(k==='c'&&flight){const m=$('#camera-mode');m.value=m.value==='chase'?'cockpit':m.value==='cockpit'?'free':'chase';syncMyModel()}});
-window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+window.addEventListener('keydown',e=>{const k=typeof e.key==='string'?e.key.toLowerCase():'';if(!k||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;if(['w','a','s','d','shift','control',' '].includes(k)){keys[k]=true;if(k===' ')e.preventDefault()}if(k==='c'&&flight){const m=$('#camera-mode');m.value=m.value==='chase'?'cockpit':m.value==='cockpit'?'free':'chase';syncMyModel()}});
+window.addEventListener('keyup',e=>{if(typeof e.key==='string')keys[e.key.toLowerCase()]=false});
 $$('[data-control]').forEach(b=>{const k={left:'a',right:'d',up:'w',down:'s',throttle:'shift'}[b.dataset.control];b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false))});
 $('#chat-form').onsubmit=async e=>{
   e.preventDefault();const input=$('#chat-input'),message=input.value.trim();if(!message)return;input.value='';
