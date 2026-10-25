@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#070711">
+  <meta name="robots" content="noindex">
+  <title>404 — Off Course | Earthflight</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root{color-scheme:dark;--bg:#070711;--text:#f6f4ff;--muted:#a7a3bc;--purple:#b58cff;--cyan:#72e7ef;--line:rgba(208,196,255,.19)}
+    *{box-sizing:border-box}
+    html{min-height:100%;background:var(--bg)}
+    body{margin:0;min-height:100vh;overflow:hidden;background:radial-gradient(ellipse at 15% 8%,rgba(93,47,174,.32),transparent 34%),radial-gradient(ellipse at 88% 75%,rgba(17,118,150,.22),transparent 34%),linear-gradient(135deg,#070711 0%,#101022 48%,#080b18 100%);color:var(--text);font-family:Manrope,system-ui,sans-serif}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.24;background-image:linear-gradient(rgba(174,158,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(174,158,255,.08) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(to bottom,black,transparent 88%)}
+    body:after{content:"";position:fixed;width:min(70vw,760px);aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-43%);border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(117,73,210,.14),rgba(67,45,132,.07) 35%,transparent 69%);filter:blur(14px)}
+    .topbar{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:27px clamp(20px,5vw,76px);border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand{display:inline-flex;align-items:center;gap:12px;color:var(--text);text-decoration:none;font-size:14px;font-weight:800;letter-spacing:1.6px}
+    .brand-mark{display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(181,140,255,.8);border-radius:11px;background:linear-gradient(145deg,rgba(181,140,255,.2),rgba(114,231,239,.06));box-shadow:0 0 28px rgba(147,91,255,.2);color:#d7c0ff;font-size:19px}
+    .brand small{display:block;margin-top:4px;color:#8f8ba8;font:9px 'DM Mono',monospace;letter-spacing:2px}
+    .status{display:flex;align-items:center;gap:9px;color:#b7b1ca;font:10px 'DM Mono',monospace;letter-spacing:1.2px}
+    .dot{width:7px;height:7px;border-radius:50%;background:#72e7b7;box-shadow:0 0 13px #72e7b7}
+    main{position:relative;z-index:1;min-height:calc(100vh - 91px);display:grid;place-items:center;padding:36px 22px 72px}
+    .content{width:min(780px,100%);text-align:center;animation:arrive .7s cubic-bezier(.2,.8,.2,1) both}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:linear-gradient(100deg,rgba(139,92,246,.12),rgba(54,186,210,.07));color:#d0b8ff;font:10px 'DM Mono',monospace;letter-spacing:1.7px}
+    .eyebrow:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--purple);box-shadow:0 0 12px var(--purple)}
+    h1{margin:24px 0 0;font-size:clamp(100px,22vw,220px);line-height:.86;letter-spacing:-.095em;font-weight:800;background:linear-gradient(135deg,#fff 7%,#d7c2ff 37%,#9a7cff 63%,#75e6ef 96%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 10px 55px rgba(143,94,255,.2))}
+    h2{margin:30px 0 12px;font-size:clamp(23px,4vw,36px);letter-spacing:-1.2px}
+    p{max-width:470px;margin:0 auto;color:var(--muted);font-size:14px;line-height:1.8}
+    .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:46px;padding:0 19px;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--text);font:11px 'DM Mono',monospace;letter-spacing:.7px;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .button:hover{transform:translateY(-2px);border-color:rgba(181,140,255,.65);box-shadow:0 8px 30px rgba(93,58,160,.18)}
+    .button.primary{border-color:transparent;color:#0b0a17;font-weight:500;background:linear-gradient(105deg,#c6a5ff,#8f9bff 56%,#80e8eb);box-shadow:0 7px 28px rgba(143,104,255,.18)}
+    .button.primary:hover{box-shadow:0 9px 36px rgba(143,104,255,.3)}
+    .arrow{font-size:16px}
+    .coordinates{margin-top:52px;color:#66627f;font:9px 'DM Mono',monospace;letter-spacing:1.8px}
+    .coordinates span{padding:0 8px;color:#a88bff}
+    @keyframes arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:540px){.topbar{padding:18px 16px}.status{font-size:8px;letter-spacing:.6px}.brand{font-size:12px}.brand-mark{width:32px;height:32px}main{min-height:calc(100vh - 69px);padding-bottom:45px}.eyebrow{font-size:8px;letter-spacing:1px}h2{margin-top:25px}.actions{flex-direction:column;align-items:stretch;max-width:280px;margin:25px auto 0}.coordinates{font-size:8px;letter-spacing:1px;margin-top:40px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Earthflight home"><span class="brand-mark">E</span><span>EARTH<span style="color:#b58cff">FLIGHT</span><small>GLOBAL FLIGHT NETWORK</small></span></a>
+    <div class="status"><span class="dot"></span> NETWORK STANDING BY</div>
+  </header>
+  <main>
+    <section class="content" aria-labelledby="title">
+      <div class="eyebrow">FLIGHT PATH NOT FOUND</div>
+      <h1 aria-label="Error 404">404</h1>
+      <h2 id="title">Looks like you've flown off course.</h2>
+      <p>The coordinates you're looking for aren't on our flight plan. Let's get you back to familiar skies.</p>
+      <div class="actions">
+        <a class="button primary" href="/">RETURN TO EARTHFLIGHT <span class="arrow">↗</span></a>
+        <a class="button" href="javascript:history.back()">GO BACK <span class="arrow">←</span></a>
+      </div>
+      <div class="coordinates">ERR 404 <span>•</span> NO ROUTE DATA <span>•</span> CHECK YOUR COORDINATES</div>
+    </section>
+  </main>
+</body>
+</html>
