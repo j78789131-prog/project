@@ -27,7 +27,7 @@
 <button class="mode" data-layer="none" data-label="Base map"><span class="ico">🗺</span><span>Base map<small>Overlay off</small></span></button>
 </div>
 <div class="section"><div class="legend-head"><span id="legend-title">TEMPERATURE OVERLAY</span><span>LIVE</span></div><div class="legend" id="legend"></div><div class="legend labels" id="legend-labels"><span>−40°C</span><span>0°C</span><span>+40°C</span></div></div>
-<p class="note">Weather overlays are served by OpenWeather. A dedicated Esri geographic reference layer draws coastlines, country boundaries, and place labels above the weather colors. Point readings are cached briefly for fast cursor feedback.</p>
+<p class="note">Weather overlays are served by OpenWeather. A dedicated Esri World Reference Overlay draws coastlines, country boundaries, and geographic labels above the weather colors. Point readings are cached briefly for fast cursor feedback.</p>
 <div class="notice" id="notice" hidden>Weather API is not configured. Add OPENWEATHER_API_KEY in your Render service Environment settings.</div>
 </aside>
 <div id="cursor-card" class="cursor-card"><div class="coords" id="coords">LAT — · LON —</div><div class="temp" id="temp">—°</div><div class="desc" id="description">Getting current conditions…</div><div class="details" id="details"></div></div>
@@ -40,9 +40,9 @@
   L.control.zoom({position:'bottomright'}).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
   map.createPane('weatherPane');map.getPane('weatherPane').classList.add('leaflet-weather-pane');map.getPane('weatherPane').style.zIndex=350;
-  // Dedicated public Esri reference tiles provide coastlines, country borders, and geographic labels above the weather raster.
+  // Dedicated Esri World Reference Overlay tiles provide coastlines, country borders, and geographic labels above the weather raster.
   map.createPane('geographyPane');map.getPane('geographyPane').style.zIndex=650;
-  const geography=L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{pane:'geographyPane',maxZoom:19,opacity:.95,attribution:'Geographic reference &copy; <a href="https://www.esri.com/">Esri</a> and Natural Earth'}).addTo(map);
+  const geography=L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Reference_Overlay/MapServer/tile/{z}/{y}/{x}',{pane:'geographyPane',maxZoom:19,opacity:.95,attribution:'Geographic reference &copy; <a href="https://www.esri.com/">Esri</a> and Natural Earth'}).addTo(map);
   let overlay=null,active='temp_new',lastRequest=0,requestTimer=null,controller=null,cache=new Map(),lastPoint=null,pendingPoint=null,fetchInFlight=false;
   const styles={
     temp_new:{title:'TEMPERATURE OVERLAY',colors:'linear-gradient(90deg,#6b42d8,#3889ff,#40d6cb,#8be34c,#ffe34a,#ff8c35,#e73844)',labels:['−40°C','0°C','+40°C']},
