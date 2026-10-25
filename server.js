@@ -220,5 +220,26 @@ io.on('connection', socket => {
   socket.on('disconnect', () => { pilots.delete(socket.id); io.emit('pilot:left', socket.id); });
 });
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'earthflight-online', database: mongoose.connection.readyState === 1, weather: !!process.env.OPENWEATHER_API_KEY, groq: !!process.env.GROQ_API_KEY }));
+
+app.get('/weather', (_req, res) => res.sendFile(path.join(__dirname, 'public/weather.html')));
+app.get('/api/weather/point', rateLimit({ windowMs: 60 * 1000, limit: 90 }), async (req, res) => {
+  if (!process.env.OPENWEATHER_API_KEY) return res.status(503).json({ error: 'Weather is not configured. Add OPENWEATHER_API_KEY in Render Environment.' });
+  const lat = Number(req.query.lat), lon = Number(req.query.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return res.status(400).json({ error: 'Valid coordinates required.' });
+  try {
+    const url = new URL('https://api.openweathermap.org/data/2.5/weather');
+    url.search = new URLSearchParams({ lat: String(lat), lon: String(lon), appid: process.env.OPENWEATHER_API_KEY, units: 'metric' });
+    const upstream = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const data = await upstream.json();
+    if (!upstream.ok) return res.status(upstream.status === 401 || upstream.status === 403 ? 502 : upstream.status).json({ error: 'Weather provider rejected the request.' });
+    res.set('Cache-Control', 'public, max-age=60');
+    res.json({
+      lat, lon, temperature: data.main?.temp, feelsLike: data.main?.feels_like,
+      description: data.weather?.[0]?.description, icon: data.weather?.[0]?.icon,
+      humidity: data.main?.humidity, windMs: data.wind?.speed, windDeg: data.wind?.deg,
+      pressureHpa: data.main?.pressure, city: data.name
+    });
+  } catch { res.status(502).json({ error: 'Could not fetch current weather.' }); }
+});
 app.get('*', (_req, res) => res.status(404).sendFile(path.join(__dirname, 'public/404.html')));
 server.listen(PORT, () => console.log('Earthflight listening on ' + PORT));
