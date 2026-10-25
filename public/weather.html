@@ -91,7 +91,9 @@
     const card=$('#cursor-card');card.style.display='block';
     const x=Math.min(window.innerWidth-220,Math.max(8,e.clientX||10)),y=Math.min(window.innerHeight-160,Math.max(70,e.clientY||80));
     card.style.left=x+'px';card.style.top=y+'px';
-    const lat=latlng.lat,lon=latlng.lng;
+    // Leaflet can report longitudes outside [-180, 180] when the map wraps around the world.
+    // Normalize longitude before displaying it or sending it to the weather API.
+    const lat=Math.max(-90,Math.min(90,latlng.lat)),lon=((latlng.lng+180)%360+360)%360-180;
     $('#coords').textContent='LAT '+lat.toFixed(3)+'° · LON '+lon.toFixed(3)+'°';
     lastPoint={lat,lon};
     // Reuse a nearby cached observation immediately; fetch a fresh one after a short pause.
