@@ -24,7 +24,14 @@
     .content{width:min(780px,100%);text-align:center;animation:arrive .7s cubic-bezier(.2,.8,.2,1) both}
     .eyebrow{display:inline-flex;align-items:center;gap:10px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:linear-gradient(100deg,rgba(139,92,246,.12),rgba(54,186,210,.07));color:#d0b8ff;font:10px 'DM Mono',monospace;letter-spacing:1.7px}
     .eyebrow:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--purple);box-shadow:0 0 12px var(--purple)}
-    h1{margin:24px 0 0;font-size:clamp(100px,22vw,220px);line-height:.86;letter-spacing:-.095em;font-weight:800;background:linear-gradient(135deg,#fff 7%,#d7c2ff 37%,#9a7cff 63%,#75e6ef 96%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 10px 55px rgba(143,94,255,.2))}
+    .render-404{display:block;width:min(100%,1000px);height:auto;margin:22px auto 0;overflow:visible;filter:drop-shadow(0 12px 36px rgba(137,0,255,.2))}
+    .render-404 text{font-family:Arial Black,Impact,system-ui,sans-serif;font-size:330px;font-weight:900;letter-spacing:-18px;fill:#8500ff}
+    .render-404 .base{fill:#8500ff}
+    .render-404 .light{fill:#e6d8ff}
+    .render-404 .pink{fill:#f02cff}
+    .render-404 .green{fill:#48ff9b}
+    .render-404 .stripe{opacity:.96}
+    .render-404 .pixel{shape-rendering:crispEdges}
     h2{margin:30px 0 12px;font-size:clamp(23px,4vw,36px);letter-spacing:-1.2px}
     p{max-width:470px;margin:0 auto;color:var(--muted);font-size:14px;line-height:1.8}
     .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}
@@ -48,7 +55,18 @@
   <main>
     <section class="content" aria-labelledby="title">
       <div class="eyebrow">FLIGHT PATH NOT FOUND</div>
-      <h1 aria-label="Error 404">404</h1>
+      <svg class="render-404" viewBox="0 0 1000 360" role="img" aria-label="Error 404" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="digits"><text x="500" y="294" text-anchor="middle">404</text></clipPath></defs>
+        <text x="500" y="294" text-anchor="middle" class="base">404</text>
+        <g clip-path="url(#digits)" class="pixel">
+          <path class="light stripe" d="M0 20H1000V38H0ZM0 88H1000V105H0ZM0 144H1000V160H0ZM0 214H1000V230H0ZM0 282H1000V299H0ZM0 332H1000V348H0Z"/>
+          <path class="pink stripe" d="M0 54H1000V70H0ZM0 174H1000V188H0ZM0 248H1000V263H0Z"/>
+          <path class="green stripe" d="M0 76H1000V88H0ZM0 194H1000V207H0ZM0 310H1000V324H0Z"/>
+          <rect class="light" x="0" y="18" width="1000" height="10"/>
+          <rect class="pink" x="0" y="55" width="1000" height="9"/>
+          <rect class="green" x="0" y="95" width="1000" height="8"/>
+        </g>
+      </svg>
       <h2 id="title">Looks like you've flown off course.</h2>
       <p>The coordinates you're looking for aren't on our flight plan. Let's get you back to familiar skies.</p>
       <div class="actions">
