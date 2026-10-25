@@ -220,5 +220,5 @@ io.on('connection', socket => {
   socket.on('disconnect', () => { pilots.delete(socket.id); io.emit('pilot:left', socket.id); });
 });
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'earthflight-online', database: mongoose.connection.readyState === 1, weather: !!process.env.OPENWEATHER_API_KEY, groq: !!process.env.GROQ_API_KEY }));
-app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
+app.get('*', (_req, res) => res.status(404).sendFile(path.join(__dirname, 'public/404.html')));
 server.listen(PORT, () => console.log('Earthflight listening on ' + PORT));
