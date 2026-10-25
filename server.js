@@ -222,6 +222,25 @@ io.on('connection', socket => {
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'earthflight-online', database: mongoose.connection.readyState === 1, weather: !!process.env.OPENWEATHER_API_KEY, groq: !!process.env.GROQ_API_KEY }));
 
 app.get('/weather', (_req, res) => res.sendFile(path.join(__dirname, 'public/weather.html')));
+app.get('/api/weather/tiles/:layer/:z/:x/:y.png', rateLimit({ windowMs: 60 * 1000, limit: 600 }), async (req, res) => {
+  const allowedLayers = new Set(['temp_new', 'precipitation_new', 'wind_new', 'clouds_new', 'pressure_new']);
+  const { layer } = req.params;
+  const z = Number(req.params.z), x = Number(req.params.x), y = Number(req.params.y);
+  if (!allowedLayers.has(layer) || ![z, x, y].every(Number.isInteger) || z < 0 || z > 18 || x < 0 || y < 0 || x >= 2 ** z || y >= 2 ** z) return res.status(400).end();
+  if (!process.env.OPENWEATHER_API_KEY) return res.status(503).end();
+  try {
+    const url = new URL(`https://tile.openweathermap.org/map/${layer}/${z}/${x}/${y}.png`);
+    url.searchParams.set('appid', process.env.OPENWEATHER_API_KEY);
+    const upstream = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    if (!upstream.ok) return res.status(upstream.status === 404 ? 404 : 502).end();
+    res.set({
+      'Content-Type': upstream.headers.get('content-type') || 'image/png',
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    res.send(Buffer.from(await upstream.arrayBuffer()));
+  } catch { res.status(502).end(); }
+});
 app.get('/api/weather/point', rateLimit({ windowMs: 60 * 1000, limit: 90 }), async (req, res) => {
   if (!process.env.OPENWEATHER_API_KEY) return res.status(503).json({ error: 'Weather is not configured. Add OPENWEATHER_API_KEY in Render Environment.' });
   const lat = Number(req.query.lat), lon = Number(req.query.lon);
