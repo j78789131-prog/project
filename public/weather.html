@@ -42,8 +42,8 @@
   map.createPane('weatherPane');map.getPane('weatherPane').classList.add('leaflet-weather-pane');map.getPane('weatherPane').style.zIndex=350;
   map.createPane('boundaryPane');map.getPane('boundaryPane').classList.add('leaflet-boundary-pane');map.getPane('boundaryPane').style.zIndex=420;
   // Transparent cartographic labels/borders sit above the weather colors so coastlines and country boundaries remain legible.
-  boundaries=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{pane:'boundaryPane',subdomains:'abcd',maxZoom:20,opacity:.92,attribution:'&copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
   let overlay=null,boundaries=null,active='temp_new',lastRequest=0,requestTimer=null,controller=null,cache=new Map(),lastPoint=null,pendingPoint=null,fetchInFlight=false;
+  boundaries=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{pane:'boundaryPane',subdomains:'abcd',maxZoom:20,opacity:.92,attribution:'&copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
   const styles={
     temp_new:{title:'TEMPERATURE OVERLAY',colors:'linear-gradient(90deg,#6b42d8,#3889ff,#40d6cb,#8be34c,#ffe34a,#ff8c35,#e73844)',labels:['−40°C','0°C','+40°C']},
     precipitation_new:{title:'PRECIPITATION OVERLAY',colors:'linear-gradient(90deg,#b7c8d9,#51d9f1,#318bff,#7c3cff,#f038cf)',labels:['Light','Moderate','Heavy']},
