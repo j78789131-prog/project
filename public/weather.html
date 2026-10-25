@@ -53,7 +53,26 @@
     document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.layer===layer));
     if(overlay){map.removeLayer(overlay);overlay=null}
     if(layer!=='none'){
-      overlay=L.tileLayer('/api/weather/tiles/'+layer+'/{z}/{x}/{y}.png',{pane:'weatherPane',opacity:1,maxZoom:18,attribution:'Weather &copy; <a href="https://openweathermap.org/">OpenWeather</a>'});
+      // Turn faint weather pixels fully opaque while preserving truly transparent pixels.
+      // Tile images are same-origin through our server proxy, so canvas sampling is permitted.
+      const OpaqueWeatherTiles=L.GridLayer.extend({
+        createTile:function(coords,done){
+          const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
+          const ctx=canvas.getContext('2d',{willReadFrequently:true});
+          const img=new Image();img.onload=()=>{
+            try{
+              ctx.drawImage(img,0,0,256,256);
+              const frame=ctx.getImageData(0,0,256,256),px=frame.data;
+              for(let i=3;i<px.length;i+=4){if(px[i]>12)px[i]=255;}
+              ctx.putImageData(frame,0,0);done(null,canvas);
+            }catch(err){done(err,canvas)}
+          };
+          img.onerror=()=>done(new Error('Weather tile failed to load'),canvas);
+          img.src='/api/weather/tiles/'+layer+'/'+coords.z+'/'+coords.x+'/'+coords.y+'.png';
+          return canvas;
+        }
+      });
+      overlay=new OpaqueWeatherTiles({pane:'weatherPane',opacity:1,maxZoom:18,attribution:'Weather &copy; <a href="https://openweathermap.org/">OpenWeather</a>'});
       overlay.on('tileerror',()=>{if(!window.GAME_CONFIG?.weatherEnabled)$('#notice').hidden=false});
       overlay.addTo(map);
     }
